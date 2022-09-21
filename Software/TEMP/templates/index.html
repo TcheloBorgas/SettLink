@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Iris
+        </title>
+    </head>
+    <body>
+        <form method="POST">
+            <input type="text" name="sl" placeholder="sepal length (cm)"/>
+            <input type="text" name="sw" placeholder="sepal width (cm)"/>
+            <input type="text" name="pl" placeholder="petal length (cm)"/>
+            <input type="text" name="pw" placeholder="petal width (cm)"/>
+            <input type="submit" value="Subimit"/>
+
+            {% if pred %}
+                <p>This flower is : <b>{{ pred }}</b></p>
+                <img src="{{ full_image }}" alt="User Image" width="400" height="400">
+            {% endif %}
+        </form>
+    </body>
+</html>
