@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            AGI
+        </title>
+    </head>
+    <body>
+        <form method="POST">
+            <input type="text" name="x1" placeholder="temperature"/>
+            <input type="text" name="x2" placeholder="Humidade"/>
+            <input type="text" name="x3" placeholder="ph"/>
+            <input type="text" name="x4" placeholder="Chuva"/>
+            <input type="text" name="x5" placeholder="Cultura"/>
+            <input type="submit" value="Subimit"/>
+
+            {% if predN %}
+                <p>Nitrogênio (N) : <b>{{ predN }}</b></p>
+                <p>Valor do Fósforo (P) : <b>{{ predP }}</b></p>
+                <p>Valor do Potássio (K): <b>{{ predK }}</b></p>
+            
+            {% endif %}
+        </form>
+    </body>
+</html>
+
+temperature, humidity, ph, rainfall, label
+Humidade, Chuva
