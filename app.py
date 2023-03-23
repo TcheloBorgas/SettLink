@@ -1,42 +1,31 @@
 #━━━━━━━━━❮Bibliotecas❯━━━━━━━━━
 import numpy as np
 import pandas as pd
-import json
-import os
+import joblib
 from flask import Flask, request, render_template
-from tensorflow import keras
 #━━━━━━━━━━━━━━❮◆❯━━━━━━━━━━━━━━
 
 
 app = Flask(__name__)
 
-predict = keras.models.load_model('model')
+rf_model = joblib.load('model')
 
 #━━━━━━❮Função Produto❯━━━━━━━
-def pred_churn(gender,SeniorCitizen,Partner,Dependents,
-         tenure,PhoneService,MultipleLines,InternetService,
-         OnlineSecurity,DeviceProtection,TechSupport,StreamingTV,
-         StreamingMovies,Contract,PaperlessBilling,PaymentMethod,
-         MonthlyCharges,TotalCharges):
-
-    print(gender,SeniorCitizen,Partner,Dependents,
-         tenure,PhoneService,MultipleLines,InternetService,
-         OnlineSecurity,DeviceProtection,TechSupport,StreamingTV,
-         StreamingMovies,Contract,PaperlessBilling,PaymentMethod,
-         MonthlyCharges,TotalCharges)
+def pred_churn(TotalCharges,MonthlyCharges, tenure):
 
 
-'''    previsao =NeuralNet.predict(pred)
-    if previsao <0.25:
-        print('Chance Quase Nula de Churn')
-    elif previsao >0.25 and previsao <0.50:
-        print('Pouca Chance de Churn')
-    elif previsao >0.50 and previsao <0.60:
-        print('Chance Moderada de Churn')
-    elif previsao >0.60 and previsao <0.75:
-        print('Chance Alta de Churn')
-    elif previsao >0.75:
-        print('Chance Extrema de Churn')'''
+    pred_val = rf_model.predict_proba([[TotalCharges, MonthlyCharges, tenure]])
+    prob_churn = pred_val[0][1]
+    if prob_churn < 0.25:
+        return('Chance Quase Nula de Churn')
+    elif prob_churn > 0.25 and prob_churn < 0.50:
+        return('Pouca Chance de Churn')
+    elif prob_churn > 0.50 and prob_churn < 0.60:
+        return('Chance Moderada de Churn')
+    elif prob_churn > 0.60 and prob_churn < 0.75:
+        return('Chance Alta de Churn')
+    elif prob_churn > 0.75:
+        return('Chance Extrema de Churn')
 
 
 
@@ -49,55 +38,11 @@ def HelloWorld():
 def home():
     pred = None
     if request.method == 'POST':
-        gender = request.form.get('gender')
-        
-        InternetService = request.form.get('InternetService')
-        
-        Partner = request.form.get('Partner')
-        
-        Dependents = request.form.get('Dependents')
-        
-        PhoneService = request.form.get('PhoneService')
-        
-        MultipleLines = request.form.get('MultipleLines')
-        
-        OnlineSecurity = request.form.get('OnlineSecurity')
-        
-        OnlineBackup = request.form.get('OnlineBackup')
-        
-        DeviceProtection = request.form.get('DeviceProtection')
-        
-        TechSupport = request.form.get('TechSupport')
-        
-        StreamingTV = request.form.get('StreamingTV')
-        
-        StreamingMovies = request.form.get('StreamingMovies')
-        
-        Contract = request.form.get('Contract')
-        
-        PaymentMethod = request.form.get('PaymentMethod')
-        
-        PaperlessBilling = request.form.get('PaperlessBilling')
-        
-        SeniorCitizen = request.form.get('SeniorCitizen')
-        
-        tenure = request.form.get('tenure')
-
-        MonthlyCharges = request.form.get('MonthlyCharges')
-        
-        TotalCharges = request.form.get('TotalCharges')
-        
-        pred_churn(gender,SeniorCitizen,Partner,Dependents,
-                tenure,PhoneService,MultipleLines,InternetService,
-                OnlineSecurity,DeviceProtection,TechSupport,StreamingTV,
-                StreamingMovies,Contract,PaperlessBilling,PaymentMethod,
-                MonthlyCharges,TotalCharges)
-
-        return render_template('index.html')
-    return render_template('index.html')
+        TotalCharges = np.float(request.form.get('TotalCharges'))
+        MonthlyCharges = np.float(request.form.get('MonthlyCharges'))
+        tenure = np.float(request.form.get('tenure'))
+        pred = pred_churn(TotalCharges,MonthlyCharges, tenure)
+    return render_template('index.html', pred=pred)
 #━━━━━━━━━━━━━━❮◆❯━━━━━━━━━━━━━━
 
-
-
 if __name__ == '__main__':
-    app.run(debug=True)
